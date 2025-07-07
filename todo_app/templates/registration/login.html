@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン</title>
+    <link rel="stylesheet" href="{% static 'todo_app/css/style.css' %}">
+</head>
+<body class = "login-body">
+    <div class="login-container">
+        <div class ="login-header">
+            <div class = "logo">
+                <img src="{% static 'todo_app/images/your_logo.png' %}" alt="サービスのロゴ">
+                <p class = "logo-text">ポートフォリオ</p>
+            </div>
+        </div>
+        <h1>ログイン</h1>
+        {% if form.errors %}
+            <div class="error-message">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <p>{{ field.label }}: {{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+                <div class="login-form-group">
+                <label for="{{ form.username.id_for_label }}">ユーザー名:</label>
+                {{ form.username }}
+            </div>
+            <div class="login-form-group">
+                <label for="{{ form.password.id_for_label }}">パスワード:</label>
+                {{ form.password }}
+            </div>
+            <input type="submit" value="ログイン">
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+        </form>
+        <a href="{% url 'accounts:signup' %}">ユーザー登録はこちら</a>
+        <br>
+        <a href="{% url 'accounts:password_reset' %}">パスワードを忘れた方はこちら</a>
+    </div>
+</body>
+</html>

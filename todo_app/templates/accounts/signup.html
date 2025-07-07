@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新規ユーザー登録</title>
+    <link rel="stylesheet" href="{% static 'todo_app/css/style.css' %}">
+</head>
+<body class = "login-body">
+    <div class="login-container">
+        <div class ="login-header">
+            <div class = "logo">
+                <img src="{% static 'todo_app/images/your_logo.png' %}" alt="サービスのロゴ">
+                <p class = "logo-text">ポートフォリオ</p>
+            </div>
+        </div>
+        <h1>新規ユーザー登録</h1>
+        <form method="post">
+            {% csrf_token %}
+            {% if form.errors %}
+                <div style="color: red;">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p>{{ field.label }}: {{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <p><label for="{{ form.username.id_for_label }}">ユーザー名:</label>{{ form.username }}</p>
+            <p><label for="{{ form.password.id_for_label }}">パスワード:</label>{{ form.password }}</p>
+            <p><label for="{{ form.confirm_password.id_for_label }}">パスワード確認:</label>{{ form.confirm_password }}</p>
+            <p><label for="{{ form.first_name.id_for_label }}">氏名（姓）:</label>{{ form.first_name }}</p>
+            <p><label for="{{ form.last_name.id_for_label }}">氏名（名）:</label>{{ form.last_name }}</p>
+            <p><label for="{{ form.email.id_for_label }}">メールアドレス:</label>{{ form.email }}</p>
+            <button type="submit">確認画面へ</button>
+        </form>
+        <p><a href="{% url 'login' %}">ログインはこちら</a></p>
+    </div>
+</body>
+</html>

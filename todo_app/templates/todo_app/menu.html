@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>メニュー</title>
+    <link rel="stylesheet" href="{% static 'todo_app/css/style.css' %}">
+</head>
+    <body class="body">
+        <script src="{% static 'todo_app/js/menu.js' %}"></script>
+        <div class ="menu">
+            <div class ="menu-header">
+                <div class = "logo">
+                    <img src="{% static 'todo_app/images/your_logo.png' %}" alt="サービスのロゴ">
+                    <p class = "logo-text">ポートフォリオ</p>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <div class ="button">
+                    <a href="{% url 'logout' %}" class ="logout-button">ログアウト</a>
+                    <a href="{{request.path}}" class ="reload-button">更新</a>
+                </div>
+                <div>ログインユーザー: {{ user.first_name }}{{ user.last_name }}</div>
+                <script>
+                    const serverTime = "{{ now |date:'Y-m-d H:i:s' }}";
+                    console.log(serverTime);
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const serverTimeSpan = document.getElementById('serverTime');
+                        if (serverTimeSpan) {
+                            serverTimeSpan.textContent = serverTime;
+                        }
+                    });
+                </script>
+                <div>業務日付: <span id="serverTime"></span></div>
+            </div>
+        </div>
+        <div class="menu-body">
+            <div class="menu-container">
+                <h1>メニュー</h1>
+                <div class="menu-select-1">
+                    <div class = "sagyo-koutitsu">
+                        <h2>
+                            作業効率
+                        </h2>
+                        <ul>
+                            <li><a href="{% url 'todo_app:todo_list' %}" target="_blank">Todo</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+</html>

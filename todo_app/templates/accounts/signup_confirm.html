@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登録内容の確認</title>
+    <link rel="stylesheet" href="{% static 'todo_app/css/style.css' %}">
+</head>
+<body class = "login-body">
+    <div class="login-container">
+        <div class ="login-header">
+            <div class = "logo">
+                <img src="{% static 'todo_app/images/your_logo.png' %}" alt="サービスのロゴ">
+                <p class = "logo-text">ポートフォリオ</p>
+            </div>
+        </div>
+        <h1>登録内容の確認</h1>
+        <p>以下の内容で登録します。よろしければ「実行」ボタンを押してください。</p>
+        <ul>
+            <li>ユーザー名: {{ registration_data.username }}</li>
+            <li>パスワード: ********</li>
+            <li>氏名（姓）: {{ registration_data.first_name }}</li>
+            <li>氏名（名）: {{ registration_data.last_name }}</li>
+            <li>メールアドレス: {{ registration_data.email }}</li>
+        </ul>
+        <form method="post" action="{% url 'signup_execute' %}">
+            {% csrf_token %}
+            {{ confirm_form }}
+            <button type="submit">実行</button>
+        </form>
+        <p><a href="{% url 'signup' %}">戻る</a></p>
+    </div>
+</body>
+</html>

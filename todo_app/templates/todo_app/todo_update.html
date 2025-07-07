@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo リスト</title>
+    <link rel="stylesheet" href="{% static 'todo_app/css/style.css' %}">
+</head>
+<body class="body">
+    <script src="{% static 'todo_app/js/menu.js' %}"></script>
+    <script src="{% static 'todo_app/js/todo_list.js' %}"></script>
+    <div class ="menu">
+        <div class ="menu-header">
+            <div class = "logo">
+                <img src="{% static 'todo_app/images/your_logo.png' %}" alt="サービスのロゴ">
+                <p class = "logo-text">ポートフォリオ</p>
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <div class ="button">
+                <a href="{% url 'todo_app:todo_list' %}" class ="return-button">戻る</a>
+            </div>
+        </div>
+    </div>
+    <div class ="menu-body">
+        <div class="menu-container">
+            <h1>Todo更新</h1>
+            {% if form.errors %}
+                <div class="error-message">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p>{{ field.label }}: {{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <form method="post" action="{% url 'todo_app:todo_update' pk=pk %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="submit-button">確認画面へ</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

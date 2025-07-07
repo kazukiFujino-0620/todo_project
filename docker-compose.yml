@@ -1,0 +1,50 @@
+    version: '3.8'
+    services:
+      web:
+        build:
+          context: .
+          dockerfile: Dockerfile.dev
+        working_dir: /app
+        command: >
+          sh -c "
+          until /venv/bin/python3 manage.py dbshell -c 'SELECT 1;' > /dev/null 2>&1; do
+            echo 'Waiting for database connection...'
+            sleep 2
+          done;
+          /venv/bin/python3 manage.py migrate --noinput &&
+          exec /venv/bin/python3 manage.py runserver 0.0.0.0:8001"
+        ports:
+          - "8001:8001"
+        volumes:
+          - ./:/app
+          - logs_data:/app/logs
+        environment:
+          MYSQL_DATABASE: my_django_db
+          MYSQL_USER: django_user
+          MYSQL_PASSWORD: django_password
+          MYSQL_HOST: db # dbサービスの名前
+          MYSQL_PORT: 3306 # MySQLのデフォルトポート
+        depends_on:
+          db:
+            condition: service_healthy
+      db:
+        image: mysql:latest
+        ports:
+          - "3307:3306"
+        environment:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: my_django_db
+          MYSQL_USER: django_user
+          MYSQL_PASSWORD: django_password
+        healthcheck:
+          test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+          interval: 5s
+          timeout: 5s
+          retries: 3
+          start_period: 20s
+        volumes:
+          - db_data:/var/lib/mysql
+    volumes:
+      db_data:
+      logs_data:
+    

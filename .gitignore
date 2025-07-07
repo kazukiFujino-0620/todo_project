@@ -1,0 +1,45 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+
+# Distribution / packaging
+.Python
+env/
+.venv/
+build/
+develop-eggs/
+dist/
+eggs/
+.eggs/
+*.egg-info/
+
+# Logs and debug outputs
+*.log
+logs/
+debug_output.log
+django.log
+
+# Django specific files
+*.sqlite3
+media/
+
+# IDEs and editors
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+
+
+#docker-compose.override.yml
+#Dockerfile.dev
+
+# その他のOS生成ファイル
+.localized
+.npm/
+.tmp/
+.project
+.settings
+.vs/

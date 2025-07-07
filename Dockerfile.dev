@@ -1,0 +1,54 @@
+# Dockerfile.dev
+
+# ベースイメージ: Python 3.10 を使用
+FROM python:3.10
+
+# 環境変数: Python の出力がバッファリングされないように設定
+ENV PYTHONUNBUFFERED 1
+
+# 作業ディレクトリの設定: /app をコンテナ内の作業ディレクトリとする
+WORKDIR /app
+
+# システム依存関係のインストール:
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libmariadb-dev-compat \
+    libmariadb-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# 仮想環境の作成とPATHへの追加:
+ENV VIRTUAL_ENV=/venv
+ENV PATH="/venv/bin:$PATH"
+RUN python -m venv ${VIRTUAL_ENV}
+RUN pip install --upgrade pip
+
+# requirements.txt をコピーし、Pythonの依存関係をインストール
+COPY requirements.txt /app/
+RUN pip install -r /app/requirements.txt
+RUN pip install django-stubs debugpy
+
+# Logs ディレクトリをここで作成し、パーミッションを設定する
+# アプリケーションコードのコピーよりも前に配置する
+RUN mkdir -p /app/logs && chmod -R 777 /app/logs # ★この行をここに移動★
+
+# アプリケーションコードをコンテナにコピー
+COPY . /app/
+
+# 不要な chmod +x の重複行を削除
+# RUN chmod +x /app/start_dev.sh # この行は削除
+
+# start_dev.sh を実行可能にする (使っていないので不要ですが、残すなら1行のみ)
+RUN chmod +x /app/start_dev.sh # この行は1つだけにする
+
+# ユーザーの作成と権限設定 (オプション: 必要に応じてコメントアウトを解除して使用)
+# RUN groupadd -r app && useradd -u 501 -g app -m app
+# RUN chown -R app:app /app
+# RUN chmod -R 775 /app/todo_app/migrations
+# RUN mkdir -p /app/logs && chown -R app:app /app/logs
+# RUN touch /app/logs/django.log && chown app:app /app/logs/django.log
+
+# ポートの公開 (docker-compose.yml で設定しているので不要)
+# EXPOSE 8001
+
+# コンテナが起動時に実行するデフォルトコマンド (docker-compose.yml で上書きされるため、このCMDは実行されません)
+CMD ["/venv/bin/python3", "manage.py", "runserver", "0.0.0.0:8001"]

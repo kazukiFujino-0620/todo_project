@@ -1,0 +1,45 @@
+{% load static %}
+{% load tz %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登録内容の確認</title>
+    <link rel="stylesheet" href="{% static 'todo_app/css/style.css' %}">
+</head>
+<body class="body">
+    <script src="{% static 'todo_app/js/menu.js' %}"></script>
+    <script src="{% static 'todo_app/js/todo_list.js' %}"></script>
+    <div class ="menu">
+        <div class ="menu-header">
+            <div class = "logo">
+                <img src="{% static 'todo_app/images/your_logo.png' %}" alt="サービスのロゴ">
+                <p class = "logo-text">ポートフォリオ</p>
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <div class ="button">
+                <a href="{% url 'todo_app:todo_create' %}" class ="return-button">戻る</a>
+            </div>
+        </div>
+    </div>
+    <div class ="menu-body">
+        <div class="menu-container">
+            <h1>登録内容の確認</h1>
+            <p>以下の内容で登録します。よろしければ「登録実行」ボタンを押してください。</p>
+            <ul>
+                <li>タイトル: {{ todo_data.title }}</li>
+                <li>作業内容メモ: {{ todo_data.detail }}</li>
+                <li>完了予定日: {{ formatted_date }}</li>
+            </ul>
+            <form method="post" action="{% url 'todo_app:todo_create_execute' %}">
+                {% csrf_token %}
+                <div class="button">
+                    <button type="submit">登録実行</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo リスト</title>
+    <link rel="stylesheet" href="{% static 'todo_app/css/style.css' %}">
+</head>
+<script src="{% static 'todo_app/js/menu.js' %}"></script>
+<body class="body">
+    <div class ="menu">
+        <div class ="menu-header">
+            <div class = "logo">
+                <img src="{% static 'todo_app/images/your_logo.png' %}" alt="サービスのロゴ">
+                <p class = "logo-text">ポートフォリオ</p>
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <div class ="button">
+                <a href="{{request.path}}" class ="reload-button">更新</a>
+            </div>
+            <div>ログインユーザー: {{ user.first_name }}{{ user.last_name }}</div>
+            <script>
+                const serverTime = "{{ now |date:'Y-m-d H:i:s' }}";
+                console.log(serverTime);
+                document.addEventListener('DOMContentLoaded', function() {
+                    const serverTimeSpan = document.getElementById('serverTime');
+                    if (serverTimeSpan) {
+                        serverTimeSpan.textContent = serverTime;
+                    }
+                });
+            </script>
+            <div>業務日付: <span id="serverTime"></span></div>
+        </div>
+    </div>
+    <div class="todo-container">
+        <h1>Todo リスト</h1>
+        <div style="text-align: right;">
+            <div class = "button" >
+                <a href="{% url 'todo_app:todo_list' %}" class = "finish-button">完了登録</a>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div>
+                <label for="per-page-select">表示件数:</label>
+                <select id="per-page-select" onchange="changePerPage(this.value)">
+                    {% for option in per_page_options %}
+                        <option value="{{ option }}" {% if option == current_per_page %}selected{% endif %}>{{ option }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <a href="{% url 'todo_app:todo_create' %}" class="create-new-todo-button">新しい Todo を作成</a>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>完了</th>
+                    <th>タイトル</th>
+                    <th>詳細</th>
+                    <th>完了予定日</th>
+                    <th>変更</th>
+                    <th>削除</th>
+                </tr>
+            </thead>
+            <tbody id="todo-list">
+                {% for todo in todos %}
+                    <tr data-todo-id="{{ todo.id }}" {% if todo.completed %}style="background-color: red;"{% else %}style="background-color: yellow;"{% endif %}>
+                        <td>
+                            <input type="checkbox" {% if todo.completed %}checked{% endif %} data-todo-id="{{ todo.id }}">
+                        </td>
+                        <td>{{ todo.title }}</td>
+                        <td>{{ todo.detail }}</td>
+                        <td>{{ todo.Estimated_completion_date|date:"Y/m/d" }}</td>
+                        <td>
+                            <a href="{% url 'todo_app:todo_update' todo.id %}">
+                                <img src="{% static 'todo_app/images/edit_icon.png' %}" alt="変更" width="40" height="40">
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'todo_app:todo_delete' todo.id %}">
+                                <img src="{% static 'todo_app/images/delete_icon.png' %}" alt="削除" width="40" height="40">
+                            </a>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="pagination" style="text-align: center; margin-top: 20px;">
+            {% if todos.has_previous %}
+                <a href="?page={{ todos.previous_page_number }}&per_page={{ current_per_page }}">前へ</a>
+            {% endif %}
+
+            {% for i in todos.paginator.page_range %}
+                {% if todos.number == i %}
+                    <span class="current-page">{{ i }}</span>
+                {% else %}
+                    <a href="?page={{ i }}&per_page={{ current_per_page }}">{{ i }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if todos.has_next %}
+                <a href="?page={{ todos.next_page_number }}&per_page={{ current_per_page }}">次へ</a>
+            {% endif %}
+        </div>
+        
+    </div>
+    <script src="{% static 'todo_app/js/todo_list.js' %}" defer></script>
+</body>
+</html>
